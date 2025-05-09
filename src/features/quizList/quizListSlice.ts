@@ -1,16 +1,19 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import { type Quiz } from "../../types"
 import { v4 as uuidv4 } from "uuid"
+import type { User } from "firebase/auth"
 
 type QuizState = {
     quizzes: Quiz[]
     filteredQuizzes: Quiz[]
+    user: User | null
     currentQuizId: string | null
 }
 
 const initialState: QuizState = {
     quizzes: [],
     filteredQuizzes: [],
+    user: null,
     currentQuizId: null,
 }
 
@@ -34,9 +37,15 @@ const quizListSlice = createSlice({
             } else {
                 state.filteredQuizzes = state.quizzes
             }
+        },
+        logIn(state, action: PayloadAction<User>) {
+            state.user = action.payload
+        },
+        logOut(state) {
+            state.user = null
         }
     }
 })
 
-export const { addQuiz, searchQuizes } = quizListSlice.actions
+export const { addQuiz, searchQuizes, logIn, logOut } = quizListSlice.actions
 export default quizListSlice.reducer

@@ -16,6 +16,7 @@ import {
 import { ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { ContextMenu, ContextMenuContent } from "@radix-ui/react-context-menu"
 import { useState } from "react"
+import { toast } from "sonner"
 
 const Create = () => {
     const dispatch = useDispatch<AppDispatch>()
@@ -105,7 +106,7 @@ const Create = () => {
     }
 
     const handleSubmit = () => {
-        if (!title || questions.length === 0) return alert("Fill required inputs")
+        if (!title || questions.length === 0) return toast("Fill in the title of the Quiz")
 
         dispatch(addQuiz({ title, questions, poster }))
         navigate("/")

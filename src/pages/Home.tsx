@@ -1,12 +1,13 @@
 import { useSelector } from "react-redux"
 import type { RootState } from "../app/store"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { toast } from "sonner"
 
 function Home() {
     const quizList = useSelector((state: RootState) => state.quizList.filteredQuizzes)
-
-    console.log(quizList)
+    const user = useSelector((state: RootState) => state.quizList.user)
+    const navigate = useNavigate()
 
     return (
         <section className="mt-8">
@@ -29,9 +30,13 @@ function Home() {
                             <CarouselPrevious />
                             <CarouselNext />
                         </> :
-                        <div className="flex flex-col gap-2 text-neutral-400">
+                        <div className="flex flex-col items-start gap-2 text-neutral-400">
                             <span>You have no quizes yet :(</span>
-                            <Link className="underline hover:text-foreground" to={"/create"}>Create one</Link>
+                            <button onClick={() => {
+                                user ?
+                                    navigate("/create") :
+                                    toast("You must log in first")
+                            }} className="underline hover:text-foreground">Create one</button>
                         </div>}
                 </Carousel>
             </div>
