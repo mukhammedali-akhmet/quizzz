@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { Input } from './ui/input'
 import { CgGoogle, CgProfile } from 'react-icons/cg'
-import { Plus } from 'lucide-react'
+import { Moon, Plus, Sun } from 'lucide-react'
 import { Button } from './ui/button'
 import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
@@ -12,12 +12,14 @@ import { auth, googleProvider } from "../lib/firebase";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
 import { toast } from 'sonner'
+import { useTheme } from './theme-provider'
 
 const Header = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
     const [searchText, setSearchText] = useState("")
     const user = useSelector((state: RootState) => state.quizList.user)
+    const { setTheme } = useTheme()
 
     const signInWithGoogle = async () => {
         try {
@@ -49,7 +51,7 @@ const Header = () => {
     dispatch(searchQuizes(searchText))
     return (
         <header className="fixed top-5 left-0 right-0 z-50">
-            <div className="max-container px-8 flex items-center justify-between bg-background/75 backdrop-blur-sm shadow-2xl border rounded-4xl border-muted-foreground/20 py-3">
+            <div className="max-container px-8 flex items-center justify-between bg-background/75 backdrop-blur-sm  border rounded-4xl border-muted-foreground/20 py-3">
                 <Link to="/" className="flex items-center gap-2">
                     <img className="w-12" src="/quizzz.png" alt="" />
                     <span className='text-primary font-bold text-3xl'>Quizzz</span>
@@ -57,14 +59,34 @@ const Header = () => {
                 <div className="flex gap-4 items-center">
                     <Input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Search for quizzzes..." />
                     <Button onClick={() => {
-                        user ? 
+                        user ?
                             navigate("/create") :
                             toast("You must log in first")
                     }}>
                         <Plus size={30} strokeWidth={4} />
                         <span>Create Quiz</span>
                     </Button>
-                    <div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild className='flex items-center'>
+                            <Button variant="outline" size="icon">
+                                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                <span className="sr-only">Toggle theme</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setTheme("light")}>
+                                Light
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme("dark")}>
+                                Dark
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme("system")}>
+                                System
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <div className='flex items-center'>
                         {user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger className='flex items-center justify-center'>
@@ -94,7 +116,6 @@ const Header = () => {
                             </Dialog>
                         )}
                     </div>
-
                 </div>
             </div>
         </header>
