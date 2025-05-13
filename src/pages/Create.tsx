@@ -16,7 +16,7 @@ import { ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-men
 import { ContextMenu, ContextMenuContent } from "@radix-ui/react-context-menu"
 import { useState } from "react"
 import { toast } from "sonner"
-import { addDoc, collection, serverTimestamp } from "firebase/firestore"
+import { addDoc, collection } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { toggleModal } from "@/features/modal/modalSlice"
 

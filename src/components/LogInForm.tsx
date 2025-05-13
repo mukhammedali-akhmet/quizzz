@@ -1,6 +1,6 @@
-import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
-import { auth, googleProvider } from "../lib/firebase";
+import { googleProvider } from "../lib/firebase";
 import {
     Card,
     CardContent,
@@ -10,17 +10,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { useDispatch, useSelector } from "react-redux";
-import * as z from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import type { AppDispatch, RootState } from "@/app/store";
@@ -29,16 +18,6 @@ import { CgGoogle } from "react-icons/cg";
 import { Separator } from "./ui/separator";
 import { toast } from "sonner";
 import { signInUser } from "@/features/user/userSlice";
-
-const formSchema = z.object({
-    name: z.string().min(1, {
-        message: "Name is required.",
-    }),
-    email: z.string().email("Invalid email"),
-    password: z.string().min(8, {
-        message: "Password must be at least 8 characters.",
-    }),
-})
 
 const LogInForm = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -104,8 +83,7 @@ const LogInForm = () => {
 
     const signInWithGoogle = async () => {
         try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
+            await signInWithPopup(auth, googleProvider);
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Google Sign-in error:", error.message);

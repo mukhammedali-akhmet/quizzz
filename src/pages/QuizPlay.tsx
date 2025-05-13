@@ -1,20 +1,14 @@
-import type { RootState } from "@/app/store"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
+import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
-import { Separator } from "@/components/ui/separator"
-import { db } from "@/lib/firebase"
 import type { Question } from "@/types"
-import { collection, doc, getDoc, getFirestore, onSnapshot, query, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
+import { doc, getDoc, getFirestore, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
-
-
 
 const QuizPlay = () => {
     const [quiz, setQuiz] = useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null);

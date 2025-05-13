@@ -3,9 +3,9 @@ import quizListReducer from "../features/quizList/quizListSlice";
 import modalReducer from "../features/modal/modalSlice";
 import searchReducer from "../features/search/searchSlice";
 import userReducer from "../features/user/userSlice";
-import { loadState, saveState } from "./localStorage";
+// import { loadState, saveState } from "./localStorage";
 
-const persistedState = loadState();
+// const persistedState = loadState();
 
 export const store = configureStore({
   reducer: {

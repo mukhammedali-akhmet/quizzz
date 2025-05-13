@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CgProfile } from 'react-icons/cg'
 import { Moon, Plus, Sun } from 'lucide-react'
@@ -9,7 +8,7 @@ import { useTheme } from './theme-provider'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '@/app/store'
 import { toggleModal } from '@/features/modal/modalSlice'
-import { signOut, updateProfile } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { setSearchTerm } from '@/features/search/searchSlice'
 import { signOutUser } from '@/features/user/userSlice'

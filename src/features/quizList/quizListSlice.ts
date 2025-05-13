@@ -1,9 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import { type Quiz } from "../../types"
-import { v4 as uuidv4 } from "uuid"
-import { updateProfile, type User } from "firebase/auth"
-import { auth } from "@/lib/firebase";
-import { set } from "zod";
 import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 type QuizState = {
