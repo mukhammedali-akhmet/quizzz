@@ -1,6 +1,5 @@
-import { useDispatch } from "react-redux"
-import { addQuiz } from "../features/quizList/quizListSlice"
-import { type AppDispatch } from "../app/store"
+import { useDispatch, useSelector } from "react-redux"
+import { type AppDispatch, type RootState } from "../app/store"
 import { type Question } from "../types"
 import { useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
@@ -17,13 +16,18 @@ import { ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-men
 import { ContextMenu, ContextMenuContent } from "@radix-ui/react-context-menu"
 import { useState } from "react"
 import { toast } from "sonner"
+import { addDoc, collection, serverTimestamp } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { toggleModal } from "@/features/modal/modalSlice"
 
 const Create = () => {
     const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
 
-    const [title, setTitle] = useState("");
-    const [poster, setPoster] = useState<File | null>(null)
+    const user = useSelector((state: RootState) => state.user)
+
+    const [title, setTitle] = useState("Untitled Quiz");
+    const [poster, setPoster] = useState<string | null>()
     const [questions, setQuestions] = useState<Question[]>([
         {
             id: 1,
@@ -93,7 +97,7 @@ const Create = () => {
     const deleteQuestion = (id: number) => {
         setQuestions((prev) => prev.filter((q) => q.id !== id))
         if (currentQuestionId === id) {
-            setCurrentQuestionId(questions[0].id)
+            setCurrentQuestionId(questions[0]?.id || 1)
         }
         for (let i = 0; i < questions.length; i++) {
             if (questions[i].id > id) {
@@ -105,14 +109,33 @@ const Create = () => {
         setCurrentQuestionId((prev) => (prev > id ? prev - 1 : prev))
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!title || questions.length === 0) return toast("Fill in the title of the Quiz")
 
-        dispatch(addQuiz({ title, questions, poster }))
         navigate("/")
+        dispatch
+        await addDoc(collection(db, "quizList"), {
+            title: title,
+            questions: questions,
+            posterUrl: poster,
+            uid: user.uid,
+        })
     }
 
-    return (
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setPoster(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    user.uid || dispatch(toggleModal())
+
+    return user.uid ? (
         <section>
             <div className="max-container">
                 <header className="flex justify-between items-center">
@@ -122,15 +145,15 @@ const Create = () => {
                             <Label className="cursor-grab" htmlFor="poster">
                                 Poster of the quiz
                             </Label>
-                            <Input className="cursor-grab" id="poster" type="file" onChange={(e) => setPoster(e.target.files ? e.target.files[0] : null)} />
+                            <Input className="cursor-grab" id="poster" type="file" onChange={(e) => handleFileChange(e)} />
                         </div>
                     </div>
-                    <Button className="text-foreground " onClick={handleSubmit}>
+                    <Button onClick={handleSubmit}>
                         <Save />
                         <span>Publish</span>
                     </Button>
                 </header>
-                <div className="flex flex-col gap-4 mt-20">
+                <div className="flex flex-col gap-10 mt-20">
                     {currentQuestion && (
                         <div key={currentQuestion.id} className="flex flex-col gap-10 items-center">
                             <Input className="w-1/3" placeholder="Question text..." value={currentQuestion.text} onChange={(e) => updateQuestionText(currentQuestion.id, e.target.value)} />
@@ -138,7 +161,7 @@ const Create = () => {
                                 {currentQuestion.options.map((option, index) => (
                                     <div key={index} className="flex items-center gap-2">
                                         <Input className="w-2/3" placeholder={`Option ${index + 1}`} value={option.text} onChange={(e) => updateOption(currentQuestion.id, index, e.target.value)} />
-                                        <Input className="w-6 h-6 caret-green-500 bg-green-500" type="radio" name={`correct-${currentQuestion.id}`} checked={option.isCorrect} onChange={() => setCorrectOption(currentQuestion.id, index)} />
+                                        <Input className="w-6 h-6 caret-green-500 bg-green-500 cursor-pointer" type="radio" name={`correct-${currentQuestion.id}`} checked={option.isCorrect} onChange={() => setCorrectOption(currentQuestion.id, index)} />
                                     </div>
                                 ))}
                             </div>
@@ -147,14 +170,14 @@ const Create = () => {
                     <Pagination>
                         <PaginationContent className="flex gap-2">
                             {questions.map((question) => (
-                                <ContextMenu>
+                                <ContextMenu key={question.id}>
                                     <ContextMenuTrigger key={question.id}>
-                                        <PaginationItem onClick={() => setCurrentQuestionId(question.id)} className={`cursor-pointer ${currentQuestionId === question.id ? "bg-primary" : ""}`}>
+                                        <PaginationItem onClick={() => setCurrentQuestionId(question.id)} className={`cursor-pointer ${currentQuestionId === question.id ? "bg-primary text-background rounded-lg" : ""}`}>
                                             <PaginationLink>{question.id}</PaginationLink>
                                         </PaginationItem>
                                     </ContextMenuTrigger>
                                     <ContextMenuContent>
-                                        <ContextMenuItem onClick={() => deleteQuestion(question.id)} className="text-red-500 cursor-pointer bg-red-200 duration-200">
+                                        <ContextMenuItem onClick={() => deleteQuestion(question.id)} className="text-red-500 cursor-pointer bg-red-800 duration-200">
                                             <Trash2 className="text-red-500" />
                                             <span className="text-red-500">Delete</span>
                                         </ContextMenuItem>
@@ -170,6 +193,15 @@ const Create = () => {
                 </div>
             </div>
         </section>
+    ) : 
+    (
+        <div className="flex flex-col items-center justify-center py-20 gap-5">
+            <h1 className="text-4xl font-bold">You need to be logged in to create a quiz</h1>
+            <p className="text-lg text-gray-500">Please log in to continue</p>
+            <Button onClick={() => navigate("/")}>
+                <span>Go to Home</span>
+            </Button>
+        </div>
     )
 }
 

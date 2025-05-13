@@ -1,44 +1,30 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { Input } from './ui/input'
-import { CgGoogle, CgProfile } from 'react-icons/cg'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { CgProfile } from 'react-icons/cg'
 import { Moon, Plus, Sun } from 'lucide-react'
+import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { useDispatch, useSelector } from 'react-redux'
-import { useState } from 'react'
-import type { AppDispatch, RootState } from '@/app/store'
-import { logIn, logOut, searchQuizes } from '@/features/quizList/quizListSlice'
-import { signInWithPopup, signOut } from "firebase/auth";
-import { auth, googleProvider } from "../lib/firebase";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
-import { toast } from 'sonner'
 import { useTheme } from './theme-provider'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootState } from '@/app/store'
+import { toggleModal } from '@/features/modal/modalSlice'
+import { signOut, updateProfile } from "firebase/auth";
+import { auth } from "../lib/firebase";
+import { setSearchTerm } from '@/features/search/searchSlice'
+import { signOutUser } from '@/features/user/userSlice'
 
 const Header = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
-    const [searchText, setSearchText] = useState("")
-    const user = useSelector((state: RootState) => state.quizList.user)
+    const user = useSelector((state: RootState) => state.user)
+
     const { setTheme } = useTheme()
 
-    const signInWithGoogle = async () => {
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user
-            dispatch(logIn(user))
-        } catch (error) {
-            if (error instanceof Error) {
-                console.error("Google Sign-in error:", error.message);
-            } else {
-                console.error("Google Sign-in error:", error);
-            }
-        }
-    };
-
-    const handleLogout = async () => {
+    const handleSignOut = async () => {
         try {
             await signOut(auth);
-            dispatch(logOut())
+            dispatch(signOutUser());
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Google Sign-in error:", error.message);
@@ -48,7 +34,9 @@ const Header = () => {
         }
     };
 
-    dispatch(searchQuizes(searchText))
+    const term = useSelector((state: RootState) => state.search.term);
+    const location = useLocation()
+
     return (
         <header className="fixed top-5 left-0 right-0 z-50">
             <div className="max-container px-8 flex items-center justify-between bg-background/75 backdrop-blur-sm  border rounded-4xl border-muted-foreground/20 py-3">
@@ -57,11 +45,13 @@ const Header = () => {
                     <span className='text-primary font-bold text-3xl'>Quizzz</span>
                 </Link>
                 <div className="flex gap-4 items-center">
-                    <Input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Search for quizzzes..." />
+                    {location.pathname === "/" && (
+                        <Input value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
+                    )}
                     <Button onClick={() => {
                         user ?
                             navigate("/create") :
-                            toast("You must log in first")
+                            dispatch(toggleModal())
                     }}>
                         <Plus size={30} strokeWidth={4} />
                         <span>Create Quiz</span>
@@ -87,33 +77,22 @@ const Header = () => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <div className='flex items-center'>
-                        {user ? (
+                        {user.username ? (
                             <DropdownMenu>
-                                <DropdownMenuTrigger className='flex items-center justify-center'>
-                                    <img className='w-[65px] rounded-full' src={user.photoURL ?? ""} alt="" />
+                                <DropdownMenuTrigger className='flex items-center justify-center w-9 h-9'>
+                                    <img className='w-9 h-9 rounded-full' src={user.photoURL} alt="" />
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuLabel>Welcome, {user.displayName}</DropdownMenuLabel>
+                                <DropdownMenuContent className='w-20'>
+                                    <DropdownMenuLabel className="whitespace-nowrap text-ellipsis">Welcome, {user.name}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={handleLogout} className='text-red-500'>Log Out</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleSignOut} className='text-red-500'>Sign Out</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
 
                         ) : (
-                            <Dialog>
-                                <DialogTrigger><CgProfile size={35} /></DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader className='flex flex-col gap-5 items-center'>
-                                        <DialogTitle className='text-2xl'>Welcome to Quizzz</DialogTitle>
-                                        <DialogDescription>
-                                            <Button onClick={signInWithGoogle}>
-                                                <CgGoogle />
-                                                <span>Log in with Google</span>
-                                            </Button>
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                </DialogContent>
-                            </Dialog>
+                            <Button className='w-9' variant="outline" onClick={() => dispatch(toggleModal())}>
+                                <CgProfile />
+                            </Button>
                         )}
                     </div>
                 </div>

@@ -1,51 +1,33 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import { type Quiz } from "../../types"
 import { v4 as uuidv4 } from "uuid"
-import type { User } from "firebase/auth"
+import { updateProfile, type User } from "firebase/auth"
+import { auth } from "@/lib/firebase";
+import { set } from "zod";
+import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 type QuizState = {
-    quizzes: Quiz[]
-    filteredQuizzes: Quiz[]
-    user: User | null
-    currentQuizId: string | null
-}
+    quizzes: QueryDocumentSnapshot<DocumentData, DocumentData>[];
+    currentQuizId: string | null;
+  };
 
 const initialState: QuizState = {
     quizzes: [],
-    filteredQuizzes: [],
-    user: null,
     currentQuizId: null,
 }
 
 const quizListSlice = createSlice({
-    name: "quiz-list",
+    name: "quizList",
     initialState,
     reducers: {
-        addQuiz(state, action: PayloadAction<Omit<Quiz, "id">>) {
-            const newQuiz: Quiz = { ...action.payload, id: uuidv4() }
-            state.quizzes.push(newQuiz)
-        },
         setCurrentQuiz(state, action: PayloadAction<string>) {
             state.currentQuizId = action.payload
         },
-        searchQuizes(state, action: PayloadAction<string>) {
-            if (action.payload) {
-                const searchedQuizes = state.quizzes.filter(quiz => {
-                    return quiz.title.includes(action.payload)
-                })
-                state.filteredQuizzes = searchedQuizes
-            } else {
-                state.filteredQuizzes = state.quizzes
-            }
-        },
-        logIn(state, action: PayloadAction<User>) {
-            state.user = action.payload
-        },
-        logOut(state) {
-            state.user = null
+        setQuizzes(state, action: PayloadAction<QueryDocumentSnapshot<DocumentData, DocumentData>[]>) {
+            state.quizzes = action.payload
         }
     }
 })
 
-export const { addQuiz, searchQuizes, logIn, logOut } = quizListSlice.actions
+export const { setCurrentQuiz, setQuizzes } = quizListSlice.actions
 export default quizListSlice.reducer
