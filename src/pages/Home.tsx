@@ -1,22 +1,15 @@
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "../app/store"
-import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
+import type { RootState } from "../app/store"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { toggleModal } from "@/features/modal/modalSlice"
-import { Play, Trash } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
+import { collection, deleteDoc, doc, onSnapshot, query, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import Quiz, { QuizSkeleton } from "@/components/Quiz"
 
 function Home() {
     const [quizzes, setQuizzes] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>[]>([])
-    const quizList = useSelector((state: RootState) => state.quizList.quizzes)
     const user = useSelector((state: RootState) => state.user)
     const searchTerm = useSelector((state: RootState) => state.search.term);
-    const navigate = useNavigate()
-    const dispatch = useDispatch<AppDispatch>()
 
     async function deleteDocument(documentId: string) {
         try {
