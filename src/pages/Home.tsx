@@ -48,7 +48,7 @@ function Home() {
                     <CarouselContent>
                         {quizzes.length !== 0 ?
                             [...filteredItems].reverse().map(quiz => (
-                                <CarouselItem key={quiz.id} className="basis-1/5 relative flex flex-col gap-3">
+                                <CarouselItem key={quiz.id} className="basis-1/2 sm:basis-1/3 lg:basis-1/5 2xl:basis-1/6 relative flex flex-col gap-3">
                                     <Quiz
                                         id={quiz.id}
                                         uid={quiz.data().uid}
@@ -60,7 +60,7 @@ function Home() {
                                 </CarouselItem>
                             )) : (
                                 new Array(5).fill(0).map((_, index) => (
-                                    <CarouselItem key={index} className="basis-1/5 relative flex flex-col gap-3">
+                                    <CarouselItem key={index} className="basis-1/2 sm:basis-1/3 lg:basis-1/5 2xl:basis-1/6 relative flex flex-col gap-3">
                                         <QuizSkeleton />
                                     </CarouselItem>
                                 ))

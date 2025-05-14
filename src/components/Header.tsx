@@ -38,14 +38,14 @@ const Header = () => {
 
     return (
         <header className="fixed top-5 left-0 right-0 z-50">
-            <div className="max-container px-8 flex items-center justify-between bg-background/75 backdrop-blur-sm  border rounded-4xl border-muted-foreground/20 py-3">
+            <div className="max-container px-4 sm:px-8 flex items-center justify-between bg-background/75 backdrop-blur-sm border rounded-4xl border-muted-foreground/20 py-3">
                 <Link to="/" className="flex items-center gap-2">
                     <img className="w-12" src="/quizzz.png" alt="" />
-                    <span className='text-primary font-bold text-3xl'>Quizzz</span>
+                    <span className='hidden md:blocktext-primary font-bold text-3xl'>Quizzz</span>
                 </Link>
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-2 md:gap-4 items-center justify-end">
                     {location.pathname === "/" && (
-                        <Input value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
+                        <Input className="max-sm:w-1/4" value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
                     )}
                     <Button onClick={() => {
                         user ?
@@ -53,7 +53,7 @@ const Header = () => {
                             dispatch(toggleModal())
                     }}>
                         <Plus size={30} strokeWidth={4} />
-                        <span>Create Quiz</span>
+                        <span className="hidden sm:block">Create Quiz</span>
                     </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild className='flex items-center'>

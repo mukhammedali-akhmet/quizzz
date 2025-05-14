@@ -138,8 +138,8 @@ const Create = () => {
     return user.uid ? (
         <section>
             <div className="max-container">
-                <header className="flex justify-between items-center">
-                    <div className="flex gap-4 items-center">
+                <header className="flex justify-between md:items-center">
+                    <div className="flex max-md:flex-col gap-4 items-center">
                         <Input placeholder="Title of the quiz..." value={title} onChange={(e) => setTitle(e.target.value)} />
                         <div className="flex flex-col gap-2">
                             <Label className="cursor-grab" htmlFor="poster">
@@ -157,7 +157,7 @@ const Create = () => {
                     {currentQuestion && (
                         <div key={currentQuestion.id} className="flex flex-col gap-10 items-center">
                             <Input className="w-1/3" placeholder="Question text..." value={currentQuestion.text} onChange={(e) => updateQuestionText(currentQuestion.id, e.target.value)} />
-                            <div className="grid grid-cols-2 gap-5 w-1/2">
+                            <div className="grid grid-cols-2 gap-5 md:w-1/2">
                                 {currentQuestion.options.map((option, index) => (
                                     <div key={index} className="flex items-center gap-2">
                                         <Input className="w-2/3" placeholder={`Option ${index + 1}`} value={option.text} onChange={(e) => updateOption(currentQuestion.id, index, e.target.value)} />
