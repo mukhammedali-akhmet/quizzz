@@ -4,6 +4,7 @@ import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
+import { Separator } from "@/components/ui/separator"
 import type { Question } from "@/types"
 import { doc, getDoc, getFirestore, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
 import { useEffect, useState } from "react"
@@ -78,13 +79,13 @@ const QuizPlay = () => {
         quiz ? (
         <>
             {finished && (
-                <Card className="scale-125 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-10 shadow-lg rounded-lg z-50">
+                <Card className="scale-125 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-10 shadow-lg rounded-lg z-50 bg-background">
                     <Results />
                 </Card>
             )}
-            <div className="max-container flex flex-col gap-10 mt-20">
+            <div className="max-container flex flex-col gap-10">
                 <div className="flex w-full justify-between">
-                    <h2 className="font-bold text-2xl text-start">{quiz?.data().title}</h2>
+                    <h2 className="font-semibold text-neutral-400 text-2xl text-start">{quiz?.data().title}</h2>
                     <div className="flex flex-col gap-2">
                         <p>Answered: {Object.keys(playInput).length}/{questions.length}</p>
                         <Button onClick={handleFinish} variant="secondary">Finish</Button>
@@ -93,12 +94,15 @@ const QuizPlay = () => {
                 <div className="flex flex-col gap-20">
                     {currentQuestion && (
                         <div key={currentQuestion.id} className="flex flex-col gap-10 items-center">
-                            <h1 className="font-bold text-2xl">{currentQuestion.text}</h1>
-                            <div className="grid grid-cols-2 gap-5 w-1/2">
+                            <h1 className="font-semibold text-2xl text-center">{currentQuestion.text}</h1>
+                            <div className="grid grid-cols-1 gap-5 w-5/6 md:w-2/3 lg:w-1/2">
                                 {currentQuestion.options?.map((option, index) => (
-                                    <div key={index} className="flex items-center justify-center gap-2 border-neutral-800 border py-2">
-                                        <Label className="font-medium text-lg">{option.text}</Label>
-                                        <Input className="w-6 h-6 caret-green-500 bg-green-500 cursor-pointer" type="radio" name={`correct-${currentQuestion.id}`} onChange={() => setPlayInput(prev => ({ ...prev, [currentQuestion.id]: index }))} value={playInput[currentQuestion.id] ?? ""} checked={playInput[currentQuestion.id] === index} />
+                                    <div key={index} className="flex flex-col gap-4">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <Label htmlFor={option.text} className={"text-lg grow text-neutral-" + (playInput[currentQuestion.id] === index ? "0" : "400")}>{option.text}</Label>
+                                            <Input className="w-6 h-6 caret-green-500 bg-green-500 cursor-pointer" type="radio" id={option.text} name={`correct-${currentQuestion.id}`} onChange={() => setPlayInput(prev => ({ ...prev, [currentQuestion.id]: index }))} value={playInput[currentQuestion.id] ?? ""} checked={playInput[currentQuestion.id] === index} />
+                                        </div>
+                                        <Separator />
                                     </div>
                                 ))}
                             </div>
@@ -108,7 +112,7 @@ const QuizPlay = () => {
                         <PaginationPrevious className={currentQuestionId === 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} onClick={() => {
                             currentQuestionId === 1 || setCurrentQuestionId(prev => prev -= 1)}
                         } />
-                        <PaginationContent className="flex gap-2">
+                        <PaginationContent className="flex flex-wrap gap-2">
                             {questions.map((question) => (
                                 <ContextMenu key={question.id}>
                                     <ContextMenuTrigger key={question.id}>

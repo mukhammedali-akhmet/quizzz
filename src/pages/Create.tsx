@@ -19,6 +19,7 @@ import { toast } from "sonner"
 import { addDoc, collection } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { toggleModal } from "@/features/modal/modalSlice"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 const Create = () => {
     const dispatch = useDispatch<AppDispatch>()
@@ -117,7 +118,7 @@ const Create = () => {
         await addDoc(collection(db, "quizList"), {
             title: title,
             questions: questions,
-            posterUrl: poster,
+            posterUrl: poster || "/no-image.svg",
             uid: user.uid,
         })
     }
@@ -138,28 +139,48 @@ const Create = () => {
     return user.uid ? (
         <section>
             <div className="max-container">
-                <header className="flex justify-between md:items-center">
-                    <div className="flex max-md:flex-col gap-4 items-center">
-                        <Input placeholder="Title of the quiz..." value={title} onChange={(e) => setTitle(e.target.value)} />
-                        <div className="flex flex-col gap-2">
-                            <Label className="cursor-grab" htmlFor="poster">
-                                Poster of the quiz
-                            </Label>
-                            <Input className="cursor-grab" id="poster" type="file" onChange={(e) => handleFileChange(e)} />
-                        </div>
-                    </div>
-                    <Button onClick={handleSubmit}>
-                        <Save />
-                        <span>Publish</span>
-                    </Button>
+                <header className="flex justify-end md:items-center">
+                    <Dialog>
+                        <DialogTrigger>
+                            <Button>
+                                <Save />
+                                <span>Publish</span>
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="gap-10">
+                            <DialogHeader className="font-bold text-2xl">Publising the quiz</DialogHeader>
+                            <div className="flex flex-col gap-5">
+                                <div className="flex flex-col gap-2">
+                                    <Label htmlFor="title">
+                                        Title of the quiz
+                                    </Label>
+                                    <Input id="title" placeholder="Title of the quiz..." value={title} onChange={(e) => setTitle(e.target.value)} />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <Label htmlFor="poster">
+                                        Poster of the quiz
+                                    </Label>
+                                    <Input className="w-1/2" id="poster" type="file" onChange={(e) => handleFileChange(e)} />
+                                </div>
+                                {poster && <div className="flex flex-col gap-2">
+                                    <img src={poster} className="w-full aspect-[16/9]" />
+                                    <caption>Poster preview</caption>
+                                </div>}
+                            </div>
+                            <Button onClick={handleSubmit}>
+                                <Save />
+                                <span>Publish</span>
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
                 </header>
-                <div className="flex flex-col gap-10 mt-20">
+                <div className="flex flex-col gap-10 mt-10 sm:mt-20">
                     {currentQuestion && (
                         <div key={currentQuestion.id} className="flex flex-col gap-10 items-center">
-                            <Input className="w-1/3" placeholder="Question text..." value={currentQuestion.text} onChange={(e) => updateQuestionText(currentQuestion.id, e.target.value)} />
-                            <div className="grid grid-cols-2 gap-5 md:w-1/2">
+                            <Input className="w-1/2 md:w-1/3" placeholder="Question text..." value={currentQuestion.text} onChange={(e) => updateQuestionText(currentQuestion.id, e.target.value)} />
+                            <div className="grid grid-cols-1 gap-5 w-3/4 md:w-1/2">
                                 {currentQuestion.options.map((option, index) => (
-                                    <div key={index} className="flex items-center gap-2">
+                                    <div key={index} className="flex items-center justify-center gap-2">
                                         <Input className="w-2/3" placeholder={`Option ${index + 1}`} value={option.text} onChange={(e) => updateOption(currentQuestion.id, index, e.target.value)} />
                                         <Input className="w-6 h-6 caret-green-500 bg-green-500 cursor-pointer" type="radio" name={`correct-${currentQuestion.id}`} checked={option.isCorrect} onChange={() => setCorrectOption(currentQuestion.id, index)} />
                                     </div>
@@ -168,7 +189,7 @@ const Create = () => {
                         </div>
                     )}
                     <Pagination>
-                        <PaginationContent className="flex gap-2">
+                        <PaginationContent className="flex flex-wrap justify-center gap-2">
                             {questions.map((question) => (
                                 <ContextMenu key={question.id}>
                                     <ContextMenuTrigger key={question.id}>
@@ -193,16 +214,16 @@ const Create = () => {
                 </div>
             </div>
         </section>
-    ) : 
-    (
-        <div className="flex flex-col items-center justify-center py-20 gap-5">
-            <h1 className="text-4xl font-bold">You need to be logged in to create a quiz</h1>
-            <p className="text-lg text-gray-500">Please log in to continue</p>
-            <Button onClick={() => navigate("/")}>
-                <span>Go to Home</span>
-            </Button>
-        </div>
-    )
+    ) :
+        (
+            <div className="flex flex-col items-center justify-center py-20 gap-5">
+                <h1 className="text-4xl font-bold">You need to be logged in to create a quiz</h1>
+                <p className="text-lg text-gray-500">Please log in to continue</p>
+                <Button onClick={() => navigate("/")}>
+                    <span>Go to Home</span>
+                </Button>
+            </div>
+        )
 }
 
 export default Create

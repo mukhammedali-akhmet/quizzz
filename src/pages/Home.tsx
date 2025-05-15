@@ -27,7 +27,6 @@ function Home() {
         )
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const snapshotDocs = snapshot.docs;
-            console.log(snapshotDocs[0].data())
             setQuizzes(snapshotDocs)
         })
 
@@ -35,7 +34,8 @@ function Home() {
     }, [])
 
     const filteredItems = quizzes.filter(quiz =>
-        quiz.data().title.toLowerCase().includes(searchTerm.toLowerCase())
+        quiz.data().title.toLowerCase().includes(searchTerm.toLowerCase()),
+        console.log(quizzes)
     );
 
     return (

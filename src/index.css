@@ -127,34 +127,7 @@
     margin: 0 auto;
   }
 
-  /* Контейнер скроллбара */
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-    margin-top: 10px;
-    /* ширина вертикального скроллбара */
-  }
-
-  /* Фон трека (дорожка, по которой движется ползунок) */
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 5px;
-    margin-top: 10px;
-  }
-
-  /* Ползунок */
-  ::-webkit-scrollbar-thumb {
-    @apply bg-neutral-400;
-    border-radius: 5px;
-  }
-
-  /* При наведении на ползунок */
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-neutral-600;
-  }
-
   button {
     cursor: pointer;
   }
-
 }

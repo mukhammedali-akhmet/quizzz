@@ -14,7 +14,7 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <main className='mt-[110px]'>
+      <main className='mt-[110px] mb-10 overflow-hidden'>
         <Outlet />
       </main>
       {user.username ? null : (
