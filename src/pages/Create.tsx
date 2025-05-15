@@ -19,7 +19,7 @@ import { toast } from "sonner"
 import { addDoc, collection } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { toggleModal } from "@/features/modal/modalSlice"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
 
 const Create = () => {
     const dispatch = useDispatch<AppDispatch>()
