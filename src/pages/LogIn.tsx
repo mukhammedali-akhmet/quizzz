@@ -184,7 +184,7 @@ export default function LogIn() {
     return (
         <section className="py-10">
             {mode === "sign-up" ? (
-                <div className="flex flex-col gap-5 items-center w-1/3 mx-auto">
+                <div className="flex flex-col gap-5 items-center lg:w-1/3 mx-auto">
                     {!firstCheckSuccess ? (
                         <>
                             <div className="flex flex-col text-center gap-1">
@@ -294,7 +294,7 @@ export default function LogIn() {
                     )}
                 </div>
             ) : resetPassword || (
-                <div className="flex flex-col gap-5 items-center w-1/3 mx-auto">
+                <div className="flex flex-col gap-5 items-center lg:w-1/3 mx-auto">
                     <div className="flex flex-col text-center gap-1">
                         <h2 className="text-3xl font-semibold">Welcome back!</h2>
                     </div>
@@ -349,7 +349,7 @@ export default function LogIn() {
                 </div>
             )}
             {resetPassword && (
-                <div className="flex flex-col gap-5 items-center w-1/3 mx-auto">
+                <div className="flex flex-col gap-5 items-center lg:w-1/3 mx-auto">
                     <div className="flex flex-col text-center gap-1">
                         <h2 className="text-3xl font-semibold">Reset your password</h2>
                     </div>
