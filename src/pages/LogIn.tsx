@@ -11,7 +11,6 @@ import { useEffect, useState } from "react"
 import { collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore"
 import { db, googleProvider } from "@/lib/firebase"
 import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInAnonymously, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth"
-import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner"

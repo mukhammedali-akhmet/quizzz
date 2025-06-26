@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from "react-redux"
-import { type AppDispatch, type RootState } from "../app/store"
+import { useDispatch } from "react-redux"
+import { type AppDispatch } from "../app/store"
 import { type Question } from "../types"
 import { useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
@@ -23,8 +23,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components
 const Create = () => {
     const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
-
-    const user = useSelector((state: RootState) => state.user)
 
     const [title, setTitle] = useState("Untitled Quiz");
     const [poster, setPoster] = useState<string | null>()
