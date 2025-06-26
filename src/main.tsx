@@ -9,6 +9,8 @@ import Home from "./pages/Home.tsx"
 import { ThemeProvider } from './components/theme-provider.tsx'
 import Create from './pages/Create.tsx'
 import QuizPlay from './pages/QuizPlay.tsx'
+import LogIn from './pages/LogIn.tsx'
+import ResetPassword from './pages/ResetPassword.tsx'
 
 const router = createBrowserRouter([
   {
@@ -17,7 +19,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "/create", element: <Create /> },
-      { path: "quiz/:id", element: <QuizPlay /> },
+      { path: "/login", element: <LogIn /> },
+      { path: "/reset", element: <ResetPassword /> },
+      { path: "/quiz/:id", element: <QuizPlay /> },
     ],
   },
 ]);

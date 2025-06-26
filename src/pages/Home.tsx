@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux"
-import type { RootState } from "../app/store"
+// import { useSelector } from "react-redux"
+// import type { RootState } from "../app/store"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { useEffect, useState } from "react"
 import { collection, deleteDoc, doc, onSnapshot, query, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
@@ -8,14 +8,12 @@ import Quiz, { QuizSkeleton } from "@/components/Quiz"
 
 function Home() {
     const [quizzes, setQuizzes] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>[]>([])
-    const user = useSelector((state: RootState) => state.user)
-    const searchTerm = useSelector((state: RootState) => state.search.term);
+    // const searchTerm = useSelector((state: RootState) => state.term);
 
     async function deleteDocument(documentId: string) {
         try {
             const docRef = doc(db, "quizList", documentId);
             await deleteDoc(docRef);
-            console.log(`Document with ID ${documentId} deleted successfully.`);
         } catch (error) {
             console.error("Error deleting document:", error);
         }
@@ -33,10 +31,9 @@ function Home() {
         return unsubscribe
     }, [])
 
-    const filteredItems = quizzes.filter(quiz =>
-        quiz.data().title.toLowerCase().includes(searchTerm.toLowerCase()),
-        console.log(quizzes)
-    );
+    // const filteredItems = quizzes.filter(quiz =>
+    //     quiz.data().title.toLowerCase().includes(searchTerm.toLowerCase()),
+    // );
 
     return (
         <section className="mt-8">
@@ -47,14 +44,14 @@ function Home() {
                 }}>
                     <CarouselContent>
                         {quizzes.length !== 0 ?
-                            [...filteredItems].reverse().map(quiz => (
+                            [...quizzes].reverse().map(quiz => (
                                 <CarouselItem key={quiz.id} className="basis-1/2 sm:basis-1/3 lg:basis-1/5 2xl:basis-1/6 relative flex flex-col gap-3">
                                     <Quiz
                                         id={quiz.id}
                                         uid={quiz.data().uid}
                                         title={quiz.data().title}
                                         posterUrl={quiz.data().posterUrl}
-                                        userUid={user?.uid}
+                                        userUid={""}
                                         deleteDocument={deleteDocument}
                                     />
                                 </CarouselItem>

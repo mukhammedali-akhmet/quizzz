@@ -7,23 +7,21 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useTheme } from './theme-provider'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '@/app/store'
-import { toggleModal } from '@/features/modal/modalSlice'
-import { signOut } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { setSearchTerm } from '@/features/search/searchSlice'
-import { signOutUser } from '@/features/user/userSlice'
+import { useEffect, useState } from 'react'
 
 const Header = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
-    const user = useSelector((state: RootState) => state.user)
+    const auth = getAuth()
 
     const { setTheme } = useTheme()
 
     const handleSignOut = async () => {
         try {
             await signOut(auth);
-            dispatch(signOutUser());
+            navigate("/login")
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Google Sign-in error:", error.message);
@@ -33,8 +31,22 @@ const Header = () => {
         }
     };
 
-    const term = useSelector((state: RootState) => state.search.term);
+    const term = useSelector((state: RootState) => state?.term);
+    const [user, setUser] = useState<null | User>(null)
     const location = useLocation()
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user);
+            } else {
+                setUser(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
 
     return (
         <header className="fixed top-5 left-0 right-0 z-50">
@@ -48,9 +60,9 @@ const Header = () => {
                         <Input className="max-sm:w-1/4" value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
                     )}
                     <Button onClick={() => {
-                        user ?
+                        auth ?
                             navigate("/create") :
-                            dispatch(toggleModal())
+                            navigate("/login")
                     }}>
                         <Plus size={30} strokeWidth={4} />
                         <span className="hidden sm:block">Create Quiz</span>
@@ -64,32 +76,35 @@ const Header = () => {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setTheme("light")}>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("light")}>
                                 Light
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setTheme("dark")}>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("dark")}>
                                 Dark
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setTheme("system")}>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("system")}>
                                 System
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <div className='flex items-center'>
-                        {user.username ? (
+                        {user?.uid ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger className='flex items-center justify-center w-9 h-9'>
-                                    <img className='w-9 h-9 rounded-full' src={user.photoURL} alt="" />
+                                    <img className="rounded-full brightness-90 hover:brightness-75 duration-150" src={user.photoURL || "/profile.png"} alt="" />
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className='w-20'>
-                                    <DropdownMenuLabel className="whitespace-nowrap text-ellipsis">Welcome, {user.name}</DropdownMenuLabel>
+                                <DropdownMenuContent className='w-40'>
+                                    <DropdownMenuLabel className="whitespace-nowrap text-ellipsis">
+                                        Welcome, {user.displayName || "User"}
+                                    </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={handleSignOut} className='text-red-500'>Sign Out</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleSignOut} className='text-red-500 cursor-pointer'>
+                                        Sign Out
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-
                         ) : (
-                            <Button className='w-9' variant="outline" onClick={() => dispatch(toggleModal())}>
+                            <Button title="Sign In" className='w-9' variant="outline" onClick={() => navigate("/login")}>
                                 <CgProfile />
                             </Button>
                         )}

@@ -18,7 +18,6 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { addDoc, collection } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { toggleModal } from "@/features/modal/modalSlice"
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
 
 const Create = () => {
@@ -119,7 +118,6 @@ const Create = () => {
             title: title,
             questions: questions,
             posterUrl: poster || "/no-image.svg",
-            uid: user.uid,
         })
     }
 
@@ -134,9 +132,7 @@ const Create = () => {
         reader.readAsDataURL(file);
     };
 
-    user.uid || dispatch(toggleModal())
-
-    return user.uid ? (
+    return (
         <section>
             <div className="max-container">
                 <header className="flex justify-end md:items-center">
@@ -214,16 +210,7 @@ const Create = () => {
                 </div>
             </div>
         </section>
-    ) :
-        (
-            <div className="flex flex-col items-center justify-center py-20 gap-5">
-                <h1 className="text-4xl font-bold">You need to be logged in to create a quiz</h1>
-                <p className="text-lg text-gray-500">Please log in to continue</p>
-                <Button onClick={() => navigate("/")}>
-                    <span>Go to Home</span>
-                </Button>
-            </div>
-        )
+    )
 }
 
 export default Create
