@@ -5,7 +5,7 @@ export type RootState = ReturnType<typeof searchReducer>;
 
 export const store = configureStore({
   reducer: {
-    search: searchReducer,
+    searchReducer,
   }
 });
 

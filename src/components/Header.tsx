@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CgProfile } from 'react-icons/cg'
-import { Moon, Plus, Sun } from 'lucide-react'
+import { Moon, OctagonAlert, Plus, Search, Sun } from 'lucide-react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
@@ -10,6 +10,9 @@ import type { AppDispatch, RootState } from '@/app/store'
 import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { setSearchTerm } from '@/features/search/searchSlice'
 import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { Dialog, DialogContent } from './ui/dialog'
+import { DialogTrigger } from '@radix-ui/react-dialog'
 
 const Header = () => {
     const navigate = useNavigate()
@@ -31,7 +34,7 @@ const Header = () => {
         }
     };
 
-    const term = useSelector((state: RootState) => state?.term);
+    const term = useSelector((state: RootState) => state.term);
     const [user, setUser] = useState<null | User>(null)
     const location = useLocation()
 
@@ -57,7 +60,15 @@ const Header = () => {
                 </Link>
                 <div className="flex gap-2 md:gap-4 items-center justify-end">
                     {location.pathname === "/" && (
-                        <Input className="max-sm:w-1/4" value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
+                        // <Input className="max-sm:w-1/4" value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
+                        <Dialog>
+                            <DialogTrigger>
+                                <Search size={20} className="text-neutral-400 hover:text-foreground" />
+                            </DialogTrigger>
+                            <DialogContent>
+                                <Input className="max-sm:w-1/4" value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
+                            </DialogContent>
+                        </Dialog>
                     )}
                     <Button onClick={() => {
                         auth ?
@@ -93,9 +104,12 @@ const Header = () => {
                                 <DropdownMenuTrigger className='flex items-center justify-center w-9 h-9'>
                                     <img className="rounded-full brightness-90 hover:brightness-75 duration-150" src={user.photoURL || "/profile.png"} alt="" />
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className='w-40'>
+                                <DropdownMenuContent className='w-40 lg:w-50'>
                                     <DropdownMenuLabel className="whitespace-nowrap text-ellipsis">
                                         Welcome, {user.displayName || "User"}
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuLabel className={cn("whitespace-nowrap text-ellipsis font-normal text-neutral-400 flex items-center gap-2 cursor-pointer", (user.emailVerified || "text-yellow-200"))} title={user.emailVerified ? "" : "Email not verified"}>
+                                        {user.emailVerified || <OctagonAlert className="hidden lg:block" size={15} />}{user.email}
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={handleSignOut} className='text-red-500 cursor-pointer'>

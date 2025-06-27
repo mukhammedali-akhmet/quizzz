@@ -1,5 +1,3 @@
-// import { useSelector } from "react-redux"
-// import type { RootState } from "../app/store"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { useEffect, useState } from "react"
 import { collection, deleteDoc, doc, onSnapshot, query, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
@@ -8,7 +6,6 @@ import Quiz, { QuizSkeleton } from "@/components/Quiz"
 
 function Home() {
     const [quizzes, setQuizzes] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>[]>([])
-    // const searchTerm = useSelector((state: RootState) => state.term);
 
     async function deleteDocument(documentId: string) {
         try {
@@ -21,18 +18,19 @@ function Home() {
 
     useEffect(() => {
         const q = query(
-            collection(db, "quizList"),
-        )
+            collection(db, "quizList")
+        );
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const snapshotDocs = snapshot.docs;
-            setQuizzes(snapshotDocs)
-        })
+            setQuizzes(snapshotDocs);
+        });
 
-        return unsubscribe
-    }, [])
+        return unsubscribe;
+    }, []);
 
     // const filteredItems = quizzes.filter(quiz =>
-    //     quiz.data().title.toLowerCase().includes(searchTerm.toLowerCase()),
+    //     console.log(quiz.data().title.toLowerCase().includes(searchTerm?.toLowerCase()))
+    //     // quiz.data().title.toLowerCase().includes(searchTerm.toLowerCase()),
     // );
 
     return (
