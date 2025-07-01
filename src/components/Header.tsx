@@ -1,23 +1,20 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { CgProfile } from 'react-icons/cg'
-import { Moon, OctagonAlert, Plus, Search, Sun } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Check, ChevronDown, Languages, LogIn, LogOut, Moon, OctagonAlert, Search, Sun, User2 } from 'lucide-react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { useTheme } from './theme-provider'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootState } from '@/app/store'
-import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
-import { setSearchTerm } from '@/features/search/searchSlice'
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils'
 import { Dialog, DialogContent } from './ui/dialog'
 import { DialogTrigger } from '@radix-ui/react-dialog'
+import { SidebarTrigger } from './ui/sidebar'
+import { useTranslation } from 'react-i18next'
 
 const Header = () => {
     const navigate = useNavigate()
-    const dispatch = useDispatch<AppDispatch>()
     const auth = getAuth()
+    const { t, i18n } = useTranslation()
 
     const { setTheme } = useTheme()
 
@@ -33,17 +30,24 @@ const Header = () => {
             }
         }
     };
-
-    const term = useSelector((state: RootState) => state.term);
-    const [user, setUser] = useState<null | User>(null)
-    const location = useLocation()
+    const [language, setLanguage] = useState("en");
+    const languages = [
+        {
+            label: "English",
+            code: "en"
+        },
+        {
+            label: "Russian",
+            code: "ru"
+        }
+    ]
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                setUser(user);
+                // setUser(user);
             } else {
-                setUser(null);
+                // setUser(null);
             }
         });
 
@@ -52,35 +56,26 @@ const Header = () => {
 
 
     return (
-        <header className="fixed top-5 left-0 right-0 z-50">
-            <div className="max-container px-4 sm:px-8 flex items-center justify-between bg-background/75 backdrop-blur-sm border rounded-4xl border-muted-foreground/20 py-3">
-                <Link to="/" className="flex items-center gap-2">
-                    <img className="w-12" src="/quizzz.png" alt="" />
-                    <span className='hidden md:blocktext-primary font-bold text-3xl'>Quizzz</span>
-                </Link>
-                <div className="flex gap-2 md:gap-4 items-center justify-end">
-                    {location.pathname === "/" && (
-                        // <Input className="max-sm:w-1/4" value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
-                        <Dialog>
-                            <DialogTrigger>
-                                <Search size={20} className="text-neutral-400 hover:text-foreground" />
-                            </DialogTrigger>
-                            <DialogContent>
-                                <Input className="max-sm:w-1/4" value={term} onChange={(e) => dispatch(setSearchTerm(e.target.value))} placeholder="Search for quizzzes..." />
-                            </DialogContent>
-                        </Dialog>
-                    )}
-                    <Button onClick={() => {
-                        auth ?
-                            navigate("/create") :
-                            navigate("/login")
-                    }}>
-                        <Plus size={30} strokeWidth={4} />
-                        <span className="hidden sm:block">Create Quiz</span>
-                    </Button>
+        <header className="fixed top-0 w-full z-50 bg-sidebar border-b h-[var(--sidebar-width-icon)] flex items-center">
+            <div className="w-[88%] ml-3 flex justify-between items-center gap-4">
+                <div className="flex items-center gap-4">
+                    <SidebarTrigger />
+                    <Dialog>
+                        <DialogTrigger className="text-neutral-400">
+                            <Button variant="outline">
+                                <Search size={16} />
+                                <span>{t("header.search")}</span>
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <Input />
+                        </DialogContent>
+                    </Dialog>
+                </div>
+                <div className="flex items-center gap-2">
                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild className='flex items-center'>
-                            <Button variant="outline" size="icon">
+                        <DropdownMenuTrigger asChild className='flex items-center text-neutral-400'>
+                            <Button variant="ghost" size="icon">
                                 <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                                 <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                                 <span className="sr-only">Toggle theme</span>
@@ -98,31 +93,60 @@ const Header = () => {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <div className='flex items-center'>
-                        {user?.uid ? (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className='flex items-center justify-center w-9 h-9'>
-                                    <img className="rounded-full brightness-90 hover:brightness-75 duration-150" src={user.photoURL || "/profile.png"} alt="" />
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className='w-40 lg:w-50'>
-                                    <DropdownMenuLabel className="whitespace-nowrap text-ellipsis">
-                                        Welcome, {user.displayName || "User"}
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuLabel className={cn("whitespace-nowrap text-ellipsis font-normal text-neutral-400 flex items-center gap-2 cursor-pointer", (user.emailVerified || "text-yellow-200"))} title={user.emailVerified ? "" : "Email not verified"}>
-                                        {user.emailVerified || <OctagonAlert className="hidden lg:block" size={15} />}{user.email}
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={handleSignOut} className='text-red-500 cursor-pointer'>
-                                        Sign Out
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        ) : (
-                            <Button title="Sign In" className='w-9' variant="outline" onClick={() => navigate("/login")}>
-                                <CgProfile />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button className="text-neutral-400" variant="ghost" size="icon">
+                                <Languages size={16} />
                             </Button>
-                        )}
-                    </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {languages.map(lang => (
+                                <DropdownMenuItem className="cursor-pointer justify-center" onClick={() => {
+                                    setLanguage(lang.code);
+                                    i18n.changeLanguage(lang.code)
+                                }}>
+                                    {language === lang.code && <Check />}
+                                    {lang.label}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    {auth.currentUser ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="text-neutral-400 hover:text-neutral-300 hover:border-neutral-300 flex pr-1 items-center border rounded-full duration-75">
+                                {auth.currentUser?.photoURL ?
+                                    <img className="h-8 rounded-full" src={auth.currentUser?.photoURL} alt="" /> :
+                                    <Button size="icon" variant="ghost">
+                                        <User2 size={16} />
+                                    </Button>}
+                                <ChevronDown size={16} />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="p-2 flex flex-col gap-1 text-sm">
+                                <div >
+                                    {auth.currentUser?.displayName}
+                                </div>
+                                {auth.currentUser?.emailVerified ?
+                                    <div className="text-neutral-400">
+                                        {auth.currentUser.email}
+                                    </div> :
+                                    <div className="text-amber-200 flex items-center gap-1">
+                                        <OctagonAlert size={16} />
+                                        <span>{auth.currentUser?.email}</span>
+                                    </div>}
+                                <Button className="mt-1 border hover:border-red-500 hover:text-red-500" onClick={handleSignOut} variant="ghost" size="sm" title={t("header.signOut")}>
+                                    <LogOut />
+                                    {t("header.signOut")}
+                                </Button>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Link to="/login">
+                            <Button variant="default">
+                                <LogIn />
+                                <span>{t("header.signIn")}</span>
+                            </Button>
+                        </Link>
+                    )}
                 </div>
             </div>
         </header>
