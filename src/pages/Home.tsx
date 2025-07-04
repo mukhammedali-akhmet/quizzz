@@ -17,11 +17,12 @@ function Home() {
         return unsubscribe;
     }, []);
 
+    console.log(quizzes)
+
     return (
         <section className="mt-8">
             <div className="max-container flex flex-col gap-7">
                 <h1 className="font-bold text-4xl">Quizzes</h1>
-                {quizzes[0].id}
             </div>
         </section>
     )
