@@ -38,15 +38,15 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
                                     </Link>
                                 </SidebarMenuItem>
                                 <SidebarMenuItem>
-                                    <SidebarMenuButton className="bg-primary hover:bg-primary/90" asChild>
-                                        <Link to="/create">
+                                    <SidebarMenuButton asChild tooltip={t("sidebar.create")}>
+                                        <Link to="/create" className={location.pathname === "/create" ? "bg-neutral-800 border" : "bg-primary hover:bg-primary/90"}>
                                             <Plus strokeWidth={3} />
                                             <span className="font-medium">{t("sidebar.create")}</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                                 <SidebarMenuItem >
-                                    <SidebarMenuButton asChild>
+                                    <SidebarMenuButton asChild tooltip={t("sidebar.home")}>
                                         <Link className={location.pathname === "/" ? "bg-neutral-800 border" : ""} to="/">
                                             <Home />
                                             <span className="font-medium">{t("sidebar.home")}</span>
@@ -54,7 +54,7 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                                 <SidebarMenuItem>
-                                    <SidebarMenuButton asChild>
+                                    <SidebarMenuButton asChild tooltip={t("sidebar.library")}>
                                         <Link className={location.pathname === "/library" ? "bg-neutral-800 border" : ""} to="/library">
                                             <Library />
                                             <span className="font-medium">{t("sidebar.library")}</span>

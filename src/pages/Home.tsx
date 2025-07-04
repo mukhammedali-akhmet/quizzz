@@ -1,24 +1,13 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { useEffect, useState } from "react"
-import { collection, deleteDoc, doc, onSnapshot, query, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
+import { collection, onSnapshot, query, QueryDocumentSnapshot, type DocumentData } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import Quiz, { QuizSkeleton } from "@/components/Quiz"
 
 function Home() {
     const [quizzes, setQuizzes] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>[]>([])
 
-    async function deleteDocument(documentId: string) {
-        try {
-            const docRef = doc(db, "quizList", documentId);
-            await deleteDoc(docRef);
-        } catch (error) {
-            console.error("Error deleting document:", error);
-        }
-    }
-
     useEffect(() => {
         const q = query(
-            collection(db, "quizList")
+            collection(db, "quizzes")
         );
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const snapshotDocs = snapshot.docs;
@@ -28,43 +17,11 @@ function Home() {
         return unsubscribe;
     }, []);
 
-    // const filteredItems = quizzes.filter(quiz =>
-    //     console.log(quiz.data().title.toLowerCase().includes(searchTerm?.toLowerCase()))
-    //     // quiz.data().title.toLowerCase().includes(searchTerm.toLowerCase()),
-    // );
-
     return (
         <section className="mt-8">
             <div className="max-container flex flex-col gap-7">
                 <h1 className="font-bold text-4xl">Quizzes</h1>
-                <Carousel opts={{
-                    align: "start",
-                }}>
-                    <CarouselContent>
-                        {quizzes.length !== 0 ?
-                            [...quizzes].reverse().map(quiz => (
-                                <CarouselItem key={quiz.id} className="basis-1/2 sm:basis-1/3 lg:basis-1/5 2xl:basis-1/6 relative flex flex-col gap-3">
-                                    <Quiz
-                                        id={quiz.id}
-                                        uid={quiz.data().uid}
-                                        title={quiz.data().title}
-                                        posterUrl={quiz.data().posterUrl}
-                                        userUid={""}
-                                        deleteDocument={deleteDocument}
-                                    />
-                                </CarouselItem>
-                            )) : (
-                                new Array(5).fill(0).map((_, index) => (
-                                    <CarouselItem key={index} className="basis-1/2 sm:basis-1/3 lg:basis-1/5 2xl:basis-1/6 relative flex flex-col gap-3">
-                                        <QuizSkeleton />
-                                    </CarouselItem>
-                                ))
-                            )
-                        }
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                </Carousel>
+                {quizzes[0].id}
             </div>
         </section>
     )

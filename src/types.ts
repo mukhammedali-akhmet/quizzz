@@ -15,3 +15,10 @@ export type Quiz = {
     posterURL: string | null
     questions: Question[]
 }
+
+export type CustomUser = {
+    name: string
+    email: string
+    username: string
+    profilePicture?: string
+}

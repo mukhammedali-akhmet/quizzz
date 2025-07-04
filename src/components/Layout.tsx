@@ -8,8 +8,7 @@ const Layout = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <div
-      >
+      <div className="w-full">
         <Header />
         <main className='mt-[54.4px]'>
           <Outlet />
