@@ -23,6 +23,14 @@ function Home() {
         <section className="mt-8">
             <div className="max-container flex flex-col gap-7">
                 <h1 className="font-bold text-4xl">Quizzes</h1>
+                <ul className="flex gap-10">
+                    {quizzes.map(quiz => (
+                        <li key={quiz.id}>
+                            <h1 className="text-2xl font-bold">{quiz.data().title}</h1>
+                            <p>{quiz.data().description}</p>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </section>
     )

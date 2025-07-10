@@ -39,7 +39,7 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
                                 </SidebarMenuItem>
                                 <SidebarMenuItem>
                                     <SidebarMenuButton asChild tooltip={t("sidebar.create")}>
-                                        <Link to="/create" className={location.pathname === "/create" ? "bg-neutral-800 border" : "bg-primary hover:bg-primary/90"}>
+                                        <Link to="/create" className={location.pathname.includes("drafts") ? "bg-neutral-800 border" : "bg-primary hover:bg-primary/90"}>
                                             <Plus strokeWidth={3} />
                                             <span className="font-medium">{t("sidebar.create")}</span>
                                         </Link>

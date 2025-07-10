@@ -23,9 +23,9 @@ export default function LogIn() {
             navigate("/")
         } catch (error) {
             if (error instanceof Error) {
-                console.error("Google Sign-in error:", error.message);
+                toast.error(error.message);
             } else {
-                console.error("Google Sign-in error:", error);
+                toast.error(String(error));
             }
         } finally {
             setLoading("");

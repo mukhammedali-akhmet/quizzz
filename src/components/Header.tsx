@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Check, ChevronDown, Languages, LogIn, LogOut, Moon, Search, Sun, User2 } from 'lucide-react'
+import { Check, ChevronDown, Languages, LogIn, LogOut, Moon, Search, Sun } from 'lucide-react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
@@ -11,6 +11,8 @@ import { DialogTrigger } from '@radix-ui/react-dialog'
 import { SidebarTrigger } from './ui/sidebar'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+
+export const iconTriggerClass = "size-9 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
 
 const Header = () => {
     const navigate = useNavigate()
@@ -58,9 +60,6 @@ const Header = () => {
 
         return () => unsubscribe();
     }, []);
-
-    const iconTriggerClass = "size-9 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-
 
     return (
         <header className="fixed top-0 w-full z-50 bg-sidebar border-b h-[var(--sidebar-width-icon)] flex items-center">
@@ -118,14 +117,13 @@ const Header = () => {
                                 {user.photoURL ?
                                     <img className="h-8 w-8 rounded-full" src={user?.photoURL} alt="" />
                                     :
-                                    <Button className="h-8 w-8" size="icon" variant="ghost">
-                                        <User2 size={16} />
-                                    </Button>}
+                                    <img className="h-8 w-8 rounded-full" src="/profile.png" alt="" />
+                                }
                                 <ChevronDown className="max-sm:hidden" size={16} />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="p-2 flex flex-col gap-1 text-sm">
                                 <div >
-                                    {user?.displayName}
+                                    {user?.displayName ? user?.displayName : "Guest"}
                                 </div>
                                 <div className="text-neutral-400">
                                     {user.email}

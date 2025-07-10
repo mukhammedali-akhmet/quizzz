@@ -1,18 +1,23 @@
-export type AnswerOption = {
-    text: string
+export type Option = {
+    label: string
     isCorrect: boolean
 }
 
 export type Question = {
-    id: number
-    text: string
-    options: AnswerOption[]
+    id: string
+    title: string
+    type: "multiple" | "single"
+    options: Option[]
 }
 
 export type Quiz = {
-    id: string
     title: string
-    posterURL: string | null
+    description: string
+    category: string
+    tags: string[]
+    author: string
+    coverURL: string
+    plays: number
     questions: Question[]
 }
 

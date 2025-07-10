@@ -7,10 +7,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout.tsx'
 import Home from "./pages/Home.tsx"
 import { ThemeProvider } from './components/ThemeProvider.tsx'
-import QuizPlay from './pages/QuizPlay.tsx'
 import LogIn from './pages/LogIn.tsx'
 import ResetPassword from './pages/ResetPassword.tsx'
 import CreateRedirect from './pages/CreateRedirect.tsx'
+import Create from './pages/Create.tsx'
 
 const router = createBrowserRouter([
   {
@@ -19,9 +19,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "/create", element: <CreateRedirect /> },
+      { path: "/drafts/:id", element: <Create /> },
       { path: "/login", element: <LogIn /> },
       { path: "/reset", element: <ResetPassword /> },
-      { path: "/quiz/:id", element: <QuizPlay /> },
     ],
   },
 ]);
